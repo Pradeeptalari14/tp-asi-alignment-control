@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: asi-alignment-controller
+  labels:
+    app: asi-alignment-controller
+    domain: superintelligence-alignment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: asi-alignment-controller
+  template:
+    metadata:
+      labels:
+        app: asi-alignment-controller
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+      containers:
+        - name: alignment-engine
+          image: ghcr.io/pradeeptalari14/tp-asi-alignment-control:latest
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+          readinessProbe:
+            exec:
+              command: ["python", "-c", "import sys; sys.exit(0)"]
+            initialDelaySeconds: 5
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: asi-alignment-service
+spec:
+  selector:
+    app: asi-alignment-controller
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

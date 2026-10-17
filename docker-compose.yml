@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  asi-alignment-control:
+    build: .
+    image: ghcr.io/pradeeptalari14/tp-asi-alignment-control:latest
+    container_name: tp-asi-alignment-control
+    restart: unless-stopped
+    environment:
+      - LOG_LEVEL=INFO
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
